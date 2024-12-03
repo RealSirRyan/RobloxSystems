@@ -1,0 +1,31 @@
+{
+    "folder-color.pathColors": [
+        {
+            "folderPath": "RobloxSystems/src/ReplicatedStorage/Modules/",
+            "color": "foldercolorizer.color_0066ff"
+        },
+        {
+            "folderPath": "RobloxSystems/src/ReplicatedStorage/Modules/Utils/",
+            "badge": "🫠"
+        },
+        {
+            "folderPath": "RobloxSystems/src/"
+        },
+        {
+            "folderPath": "RobloxSystems/src/Replicated/",
+            "badge": "🕹️",
+            "color": "foldercolorizer.color_ff66ff"
+        },
+        {
+            "folderPath": "RobloxSystems/src/Server/Utils/Networking.luau/"
+        },
+        {
+            "folderPath": "RobloxSystems/src/Server/",
+            "color": "foldercolorizer.color_00ccff"
+        },
+        {
+            "folderPath": "RobloxSystems/src/Client/",
+            "color": "foldercolorizer.color_ffcc00"
+        }
+    ]
+}

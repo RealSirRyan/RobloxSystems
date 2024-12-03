@@ -6,19 +6,17 @@
     "ReplicatedStorage": {
       "Scripts": {
         "$className": "Folder",
-        "$path": "src/ReplicatedStorage/Scripts"
+        "$path": "src/Replicated"
       }
-      
-      
     },
 
     "ServerScriptService": {
-      "$path": "src/ServerScriptService"
+       "$path": "src/Server"
     },
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "$path": "src/StarterPlayerScripts"
+        "$path": "src/Client"
       }
     },
 

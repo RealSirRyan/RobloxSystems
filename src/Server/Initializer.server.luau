@@ -1,0 +1,1 @@
+require(game.ReplicatedStorage.Scripts.Utils.Init):initAll()
