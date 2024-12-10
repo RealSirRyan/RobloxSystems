@@ -1,4 +1,5 @@
-local Class = require(game.ReplicatedStorage.Scripts.Utils.Class)
+local Class = require(game.ReplicatedStorage.Modules.Utils.Class)
+local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
 
 local Generic = Class.new{}
 
@@ -31,23 +32,30 @@ function Generic:tick()
 			
             --Update clients on state change
             for _, player in pairs (game.Players:GetPlayers()) do
-				self:updateClient(player, "changeState", self.states.idle)
+				self:updateClient(player, "changeState", self.replicated.states.idle)
 			end
 		end
 	end
 end
 
---Initialize the monster on the client side
+
+--[[
+	Initializes the client-side script
+]]
 function Generic:initClient(player)
 	self.remotes.InitMonster:FireClient(player, self.replicated.className, self.model)
 end
 
---Prompts the client-side script to fire a function
+
+--[[
+	Prompt the client to show some sort of update on the monster
+]]
 function Generic:updateClient(player, func, ...)
     self.remotes.UpdateMonster:FireClient(player, self.model, func, ...)	
 end
 
-function Generic:_init()
+
+function Generic:init()
 	self.lastWalkTime = 0
 	self.targetPos = nil
 	self.state = self.replicated.states.idle
@@ -84,9 +92,17 @@ end
 
 
 function Generic:main()
+	self.remotes = Initialization:getRemotes(script)
+	self.client = Initialization:getClient(script)
+	self.replicated = Initialization:getReplicated(script)
+
+	self.className = script.Name
+	
 	self.walkCooldown = 5
 	self.walkDistance = 20
 end
+
+Generic:main()
 
 
 return Generic

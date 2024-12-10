@@ -1,23 +1,29 @@
 local Class = {}
 
---Construct an object from the class
+
+--[[
+    Construct an object from a class
+]]
 function Class:__call(...)
     
     --Create a new object for the class 'self'
     local object = {}
     setmetatable(object, self)
 
-    if self._init then
-        self._init(object, ...)
+    if self.init then
+        self.init(object, ...)
     end
 
     return object
 end
 
---Allows classes to access attributes and properties from a parent class
+
+--[[
+    Allows classes to access attributes and properties from a parent class
+]]
 function Class:__index(index)
-    if rawget(self, "__super") then
-        return self.__super[index]
+    if rawget(self, "_super") then
+        return self._super[index]
     end
 end
 

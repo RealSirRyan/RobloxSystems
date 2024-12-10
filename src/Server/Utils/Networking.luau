@@ -1,3 +1,5 @@
+local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
+
 local Networking = {}
 
 
@@ -19,10 +21,14 @@ end
 
 function Networking:main()
   
+    self.remotes = Initialization:getRemotes(script)
+
     self.remotes.GetDescendantsCurrentCount.OnServerInvoke = function()
         return self:_returnDescendantCount()
     end
 end
+
+Networking:main()
 
 
 return Networking

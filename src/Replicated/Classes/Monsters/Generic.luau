@@ -1,13 +1,5 @@
 local Generic = {}
 
-Generic.states = {
-	'idle',
-	'walk'
-
-}
-
-Generic.className = script.Name
-Generic.modelTemplate = game.ReplicatedStorage.MonsterTemplate
 
 function Generic:main()
 	self.states = {
@@ -17,8 +9,10 @@ function Generic:main()
 
 	self.className = script.Name
 
-	Generic.modelTemplate = game.ReplicatedStorage.MonsterTemplate
+	self.modelTemplate = game.ReplicatedStorage.MonsterTemplate
 end
+
+Generic:main()
 
 
 return Generic
