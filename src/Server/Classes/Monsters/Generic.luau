@@ -1,77 +1,61 @@
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
 local Class = require(game.ReplicatedStorage.Modules.Utils.Class)
-local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
+local Monsters
+
+local walkCooldown = 5
+local walkDistance = 20
+
 
 local Generic = Class.new{}
 
 
 function Generic:tick()
 	
-	--Is it time to pick a new random destination?
-	if self.lastWalkTime+self.walkCooldown < time() then
+	-- Is it time to pick a new random destination?
+	if self._lastWalkTime + walkCooldown < time() then
 
-		self.targetPos = (self.primary.CFrame*CFrame.Angles(0, math.random(0, 2*math.pi), 0)*CFrame.new(self.walkDistance, 0, 0)).Position
-		self.lastWalkTime=time()
+		self._targetPos = (self.primary.CFrame * CFrame.Angles(0, math.random(0, 2 * math.pi), 0) * CFrame.new(walkDistance, 0, 0)).Position
+		self._lastWalkTime = time()
 		
-		--Update clients on state change
-		for _, plr in pairs (game.Players:GetPlayers()) do
-			self:updateClient(plr, "changeState", self.replicated.states.walk)
-		end
+		-- Update client-side on state change
+		Monsters:updateMonsterOnAllClients(self, self.replicated.states.walk)
 	end
 
-    --Move to the target position
-	if self.targetPos then
-		print('Moving')
-		print(self.targetPos)
-		self.humanoid:MoveTo(self.targetPos)
+    -- Move to the target position
+	if self._targetPos then
+		
+		self.humanoid:MoveTo(self._targetPos)
 
-		--Set to idle if destination is reached
-		if (self.targetPos-self.primary.Position).magnitude < 3 then
+		-- Set to idle if destination is reached
+		if (self._targetPos-self.primary.Position).magnitude < 3 then
 			
             self.humanoid:MoveTo(self.primary.Position)
-			self.targetPos = nil
+			self._targetPos = nil
 			
-            --Update clients on state change
-            for _, player in pairs (game.Players:GetPlayers()) do
-				self:updateClient(player, "changeState", self.replicated.states.idle)
-			end
+            -- Update clients on state change
+            Monsters:updateMonsterOnAllClients(self, self.replicated.states.idle)
 		end
 	end
-end
-
-
---[[
-	Initializes the client-side script
-]]
-function Generic:initClient(player)
-	self.remotes.InitMonster:FireClient(player, self.replicated.className, self.model)
-end
-
-
---[[
-	Prompt the client to show some sort of update on the monster
-]]
-function Generic:updateClient(player, func, ...)
-    self.remotes.UpdateMonster:FireClient(player, self.model, func, ...)	
 end
 
 
 function Generic:init()
-	self.lastWalkTime = 0
-	self.targetPos = nil
-	self.state = self.replicated.states.idle
+	
+	self._lastWalkTime = 0
+	self._targetPos = nil
 
 	self.model = self.replicated.modelTemplate:Clone()
 	self.humanoid = self.model:WaitForChild("Humanoid")
     self.primary = self.model.PrimaryPart
 
-	--Removing unneeded instances on the server-side
-    for _, inst in pairs(self.model:GetDescendants()) do
-        if inst ~= self.humanoid and inst ~= self.primary then
-            inst:Destroy()
+	-- Removing unneeded instances on the server-side
+    for _, instance in pairs(self.model:GetDescendants()) do
+        if instance ~= self.humanoid and instance ~= self.primary then
+            instance:Destroy()
         end
     end
 
-	--Disable unneeded humanoid states
+	-- Disable unneeded humanoid states
 	self.humanoid:SetStateEnabled(0, false)--Falling
 	self.humanoid:SetStateEnabled(1, false)--Ragdoll
 	self.humanoid:SetStateEnabled(2, false)--Getting Up
@@ -92,17 +76,10 @@ end
 
 
 function Generic:main()
-	self.remotes = Initialization:getRemotes(script)
-	self.client = Initialization:getClient(script)
-	self.replicated = Initialization:getReplicated(script)
-
-	self.className = script.Name
 	
-	self.walkCooldown = 5
-	self.walkDistance = 20
+	self.replicated = External:getReplicated(script)
+
+	Monsters = External:import(game.ServerScriptService.Services.Monsters)
 end
-
-Generic:main()
-
 
 return Generic

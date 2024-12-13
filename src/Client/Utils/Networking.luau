@@ -1,4 +1,5 @@
-local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
+
 
 local Networking = {}
 
@@ -6,7 +7,7 @@ local Networking = {}
     Yield until all descendants of an instance are loaded
 ]]
 function Networking:waitForDescendants(instance)
-    local fullCount = self.remotes.GetDescendantsCurrentCount:InvokeServer(instance)
+    local fullCount = self.remotes.GetFullDescendantsCount:InvokeServer(instance)
     
     if fullCount then
         local currentCount = #instance:GetDescendants()
@@ -14,18 +15,16 @@ function Networking:waitForDescendants(instance)
         while currentCount < fullCount do
             local descendant = instance.DescendantAdded:Wait()
             if not self.replicated:isIgnored(descendant) then
-                currentCount +=1
+                currentCount += 1
             end
-        end        
+        end
     end
 end
 
 
 function Networking:main()
-    self.remotes = Initialization:getRemotes(script)
+    self.remotes = External:getRemotes(script)
+    self.replicated = External:getReplicated(script)
 end
-
-Networking:main()
-
 
 return Networking     

@@ -1,15 +1,22 @@
-local Networking = require(game.ReplicatedStorage.Modules.Utils.Networking)
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
 local Class = require(game.ReplicatedStorage.Modules.Utils.Class)
-local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
+local Networking
+
+local walkAnimation = Instance.new("Animation")
+local idleAnimation = Instance.new("Animation")
+
 
 local Generic = Class.new{}
 
 
-function Generic:changeState(state)
-	if self.replicated.states.find(state) and state == self.replicated.states.idle then
-		self.replicated.walk:Stop()
+function Generic:update(state)
+	
+	if state == self.replicated.states.idle then
+		
+		self.walk:Stop()
 		self.idle:Play()		
-	elseif self.replicated.states.find(state) and state == self.replicated.states.walk then
+	elseif state == self.replicated.states.walk then
+		
 		self.idle:Stop()
 		self.walk:Play()
 	end 
@@ -22,21 +29,19 @@ function Generic:init(model)
 	Networking:waitForDescendants(model)
 	Networking:waitForDescendants(self.replicated.modelTemplate)
 	
-
 	self.humanoid = model:WaitForChild("Humanoid")
 	
-	self.idle = self.humanoid:LoadAnimation(self.idleAnimation)
-	self.walk = self.humanoid:LoadAnimation(self.walkAnimation)
-
+	self.idle = self.humanoid:LoadAnimation(idleAnimation)
+	self.walk = self.humanoid:LoadAnimation(walkAnimation)
 
 	model.PrimaryPart.Transparency = 1
 
-	local modelClone = self.modelTemplate:Clone()
+	local modelClone = self.replicated.modelTemplate:Clone()
 	modelClone:SetPrimaryPartCFrame(model.PrimaryPart.CFrame)
 
-	for _, inst in pairs(modelClone:GetChildren()) do
-		if not model:FindFirstChild(inst.Name) or inst:IsA("CharacterMesh") then
-			inst.Parent = model
+	for _, instance in pairs(modelClone:GetChildren()) do
+		if not model:FindFirstChild(instance.Name) or instance:IsA("CharacterMesh") then
+			instance.Parent = model
 		end
 	end
 
@@ -47,18 +52,14 @@ end
 
 
 function Generic:main()
-	self.replicated = Initialization:getReplicated(script)
-	self.remotes = Initialization:getRemotes(script)
+	
+	Networking = External:import(game.Players.LocalPlayer.PlayerScripts.Scripts.Utils.Networking)
 
-    self.walkAnimation = Instance.new("Animation")
-    self.idleAnimation = Instance.new("Animation")
-    
-    self.walkAnimation.AnimationId = "rbxassetid://101341174956754"
-    self.idleAnimation.AnimationId = "rbxassetid://104484008905993"	
-
+	self.replicated = External:getReplicated(script)
+	
+	
+	walkAnimation.AnimationId = "rbxassetid://101341174956754"
+    idleAnimation.AnimationId = "rbxassetid://104484008905993"
 end
-
-Generic:main()
-
 
 return Generic

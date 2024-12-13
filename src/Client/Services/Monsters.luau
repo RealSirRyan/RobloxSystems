@@ -1,57 +1,50 @@
-local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
+
+local activeMonsters = {}
+local monsterClasses = {}
+
 
 local Monsters = {}
 
 
-function Monsters:initMonster(className, model)
+function Monsters:_initMonster(className, model)
 
-    if self.monsterClasses[className] then
-        local monster = self.monsterClasses[className](model)
-        self.monsters[model] = monster
+    if monsterClasses[className] then
+        local monster = monsterClasses[className](model)
+        activeMonsters[model] = monster
     end
 end
 
 
-function Monsters:updateMonster(model, func, ...)
-    local monster = self.monsters[model]
-    if monster then
-        if monster[func] then
-            --TODO: Do better error handling
-            monster[func](monster, ...)
-        end
+function Monsters:_updateMonster(model, ...)
+    local monster = activeMonsters[model]
+    if monster and monster.update then
+        monster:update(...)
     end
 end
 
 
 function Monsters:main()
-    
-    self.remotes = Initialization:getRemotes(script)
 
-    -- List of all monsters
-    self.monsters = {}
+    self.remotes = External:getRemotes(script)
 
-    -- List of all monster classes
-    self.monsterClasses = {}
 
     for _, instance in pairs (game.Players.LocalPlayer.PlayerScripts.Scripts.Classes.Monsters:GetChildren()) do
         if instance:IsA("ModuleScript") then
-            self.monsterClasses[instance.Name] = require(instance)
+            monsterClasses[instance.Name] = External:import(instance)
         end
     end
 
-
-	self.remotes.InitMonster.OnClientEvent:Connect(function(...)
-		self:initMonster(...)
+	self.remotes.InitMonsterOnClient.OnClientEvent:Connect(function(...)
+		self:_initMonster(...)
 	end)
 
-	self.remotes.UpdateMonster.OnClientEvent:Connect(function(...)
-		self:UpdateMonster(...)
+	self.remotes.UpdateMonsterOnClient.OnClientEvent:Connect(function(...)
+		self:_updateMonster(...)
 	end)
 
-    --Ask the server to send us all the currently active monsters    
-	self.remotes.InitAllMonsters:FireServer()
+    --Ask the server to send us all the currently active monsters
+	self.remotes.InitAllMonstersOnClient:FireServer()
 end
-
-Monsters:main()
 
 return Monsters

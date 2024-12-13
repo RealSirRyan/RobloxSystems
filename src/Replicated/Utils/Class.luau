@@ -1,12 +1,10 @@
 local Class = {}
 
-
 --[[
-    Construct an object from a class
+    Constructs an object. self is the class.
 ]]
 function Class:__call(...)
     
-    --Create a new object for the class 'self'
     local object = {}
     setmetatable(object, self)
 
@@ -17,23 +15,21 @@ function Class:__call(...)
     return object
 end
 
-
 --[[
     Allows classes to access attributes and properties from a parent class
 ]]
 function Class:__index(index)
-    if rawget(self, "_super") then
-        return self._super[index]
+    if rawget(self, "super") then
+        return self.super[index]
     end
 end
 
 
-function Class.new(new_class)
-    --Allows objects created with this class to access class methods and attributes
-    new_class.__index = new_class
+function Class.new(newClass)
+    -- When an object sets its metatable to the class, this allows it to access the class's methods and attributes.
+    newClass.__index = newClass
     
-    --Allow 'new_class' to access metamethods from 'Class'
-    return setmetatable(new_class, Class)
+    return setmetatable(newClass, Class)
 end
 
 

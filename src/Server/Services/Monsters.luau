@@ -1,35 +1,41 @@
 local Run = game:GetService("RunService")
 
-local Initialization = require(game.ReplicatedStorage.Modules.Utils.Initialization)
-local GenericMonster = require(game.ServerScriptService.Classes.Monsters.Generic)
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
+local Generic
+
+local activeMonsters = {}
+
 
 local Monsters = {}
 
 
-function Monsters:initAllMonsters(player)
-    
-    for _, monster in pairs (self.monsters) do
-        monster:initClient(player)
-    end
+function Monsters:updateMonsterOnAllClients(monster, ...)
+    self.remotes.UpdateMonsterOnClient:FireAllClients(monster.model, ...)    
+end
+
+
+
+
+function Monsters:_initMonsterOnClient(player, monster)
+    self.remotes.InitMonsterOnClient:FireClient(player, monster.replicated.className, monster.model)
 end
 
 
 function Monsters:main()
     
-    self.remotes = Initialization:getRemotes(script)
-    
-    self.monsters = {}
+    Generic = External:import(game.ServerScriptService.Classes.Monsters.Generic)
+
+    self.remotes = External:getRemotes(script)
 
 
-    local newMonster = GenericMonster()
-    table.insert(self.monsters, newMonster)
+    local newMonster = Generic()
+    table.insert(activeMonsters, newMonster)
 
     newMonster.model.Parent = workspace
     newMonster.model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0))
 
-
-    for _, plr in pairs (game.Players:GetPlayers()) do
-        newMonster:initClient(plr)
+    for _, player in pairs (game.Players:GetPlayers()) do
+       self:_initMonsterOnClient(player, newMonster)
     end
 
     Run.Heartbeat:Connect(function()
@@ -37,13 +43,12 @@ function Monsters:main()
     end)
 
 
-    self.remotes.InitAllMonsters.OnServerEvent:Connect(function(...)
-        self:initAllMonsters(...)
+    self.remotes.InitAllMonstersOnClient.OnServerEvent:Connect(function(player)
+        for _, monster in pairs (activeMonsters) do
+            self:_initMonsterOnClient(player, monster)
+        end
     end)
 
 end
-
-Monsters:main()
-
 
 return Monsters
