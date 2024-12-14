@@ -7,7 +7,7 @@ function Generic:main()
 		['walk']=1
 	}
 	self.className = script.Name
-	self.modelTemplate = game.ReplicatedStorage.MonsterTemplate
+	self.modelTemplate = game.ReplicatedStorage.Monsters.Templates.Generic
 end
 
 return Generic

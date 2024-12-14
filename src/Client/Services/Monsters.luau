@@ -7,10 +7,11 @@ local monsterClasses = {}
 local Monsters = {}
 
 
-function Monsters:_initMonster(className, model)
-
+function Monsters:_initMonster(className, model, config)
+    print('Do we see config here?')
+    warn(config)
     if monsterClasses[className] then
-        local monster = monsterClasses[className](model)
+        local monster = monsterClasses[className](model, config)
         activeMonsters[model] = monster
     end
 end
@@ -27,14 +28,11 @@ end
 function Monsters:main()
 
     self.remotes = External:getRemotes(script)
+    self.replicated = External:getReplicated(script)
 
+    monsterClasses = self.replicated:GetListOfMonsterClasses()
 
-    for _, instance in pairs (game.Players.LocalPlayer.PlayerScripts.Scripts.Classes.Monsters:GetChildren()) do
-        if instance:IsA("ModuleScript") then
-            monsterClasses[instance.Name] = External:import(instance)
-        end
-    end
-
+    
 	self.remotes.InitMonsterOnClient.OnClientEvent:Connect(function(...)
 		self:_initMonster(...)
 	end)

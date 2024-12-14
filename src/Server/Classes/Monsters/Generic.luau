@@ -1,16 +1,15 @@
 local External = require(game.ReplicatedStorage.Modules.Utils.External)
-local Class = require(game.ReplicatedStorage.Modules.Utils.Class)
-local Monsters
+local Class = External:import(game.ReplicatedStorage.Modules.Utils.Class)
 
-local walkCooldown = 5
-local walkDistance = 20
+-- local walkCooldown = 5
+-- local walkDistance = 20
 
 
 local Generic = Class.new{}
 
 
 function Generic:tick()
-	
+--[[
 	-- Is it time to pick a new random destination?
 	if self._lastWalkTime + walkCooldown < time() then
 
@@ -35,14 +34,16 @@ function Generic:tick()
             -- Update clients on state change
             Monsters:updateMonsterOnAllClients(self, self.replicated.states.idle)
 		end
-	end
+	end]]
 end
 
 
 function Generic:init()
 	
-	self._lastWalkTime = 0
-	self._targetPos = nil
+	-- self._lastWalkTime = 0
+	-- self._targetPos = nil
+
+	self.config = {}
 
 	self.model = self.replicated.modelTemplate:Clone()
 	self.humanoid = self.model:WaitForChild("Humanoid")
@@ -56,30 +57,28 @@ function Generic:init()
     end
 
 	-- Disable unneeded humanoid states
-	self.humanoid:SetStateEnabled(0, false)--Falling
-	self.humanoid:SetStateEnabled(1, false)--Ragdoll
-	self.humanoid:SetStateEnabled(2, false)--Getting Up
-	self.humanoid:SetStateEnabled(3, false)--Jumping
-	self.humanoid:SetStateEnabled(4, false)--Swimming
-	self.humanoid:SetStateEnabled(5, false)--Freefall
-	self.humanoid:SetStateEnabled(6, false)--Flying
-	self.humanoid:SetStateEnabled(7, false)--Landed
-	self.humanoid:SetStateEnabled(8, true)--Running
-	self.humanoid:SetStateEnabled(10, true)--Running No Physics
-	self.humanoid:SetStateEnabled(11, false)--Strafing No Physics
-	self.humanoid:SetStateEnabled(12, false)--Climbing
-	self.humanoid:SetStateEnabled(13, false)--Seated
-	self.humanoid:SetStateEnabled(14, false)--Platform Standing (Freefalling & cannot move)
-	self.humanoid:SetStateEnabled(15, false)--Dead
-	self.humanoid:SetStateEnabled(16, false)--Physics (Humanoid applies no force on its own)
+	self.humanoid:SetStateEnabled(0, false)-- Falling
+	self.humanoid:SetStateEnabled(1, false)-- Ragdoll
+	self.humanoid:SetStateEnabled(2, false)-- Getting Up
+	self.humanoid:SetStateEnabled(3, false)-- Jumping
+	self.humanoid:SetStateEnabled(4, false)-- Swimming
+	self.humanoid:SetStateEnabled(5, false)-- Freefall
+	self.humanoid:SetStateEnabled(6, false)-- Flying
+	self.humanoid:SetStateEnabled(7, false)-- Landed
+	self.humanoid:SetStateEnabled(8, true)-- Running
+	self.humanoid:SetStateEnabled(10, true)-- Running No Physics
+	self.humanoid:SetStateEnabled(11, false)-- Strafing No Physics
+	self.humanoid:SetStateEnabled(12, false)-- Climbing
+	self.humanoid:SetStateEnabled(13, false)-- Seated
+	self.humanoid:SetStateEnabled(14, false)-- Platform Standing (Freefalling & cannot move)
+	self.humanoid:SetStateEnabled(15, false)-- Dead
+	self.humanoid:SetStateEnabled(16, false)-- Physics (Humanoid applies no force on its own)
 end
 
 
 function Generic:main()
 	
 	self.replicated = External:getReplicated(script)
-
-	Monsters = External:import(game.ServerScriptService.Services.Monsters)
 end
 
 return Generic

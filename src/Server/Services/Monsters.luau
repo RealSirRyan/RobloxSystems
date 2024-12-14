@@ -1,12 +1,31 @@
 local Run = game:GetService("RunService")
 
 local External = require(game.ReplicatedStorage.Modules.Utils.External)
-local Generic
+local Vampire
 
+local rng = Random.new()
+
+local monsterClasses = {}
 local activeMonsters = {}
 
 
 local Monsters = {}
+
+
+function Monsters:spawn(className, position)
+    if type(className) == "string" and typeof(position) == "Vector3" and monsterClasses[className] then
+        local monster = monsterClasses[className]()
+
+        table.insert(activeMonsters, monster)
+
+        monster.model.Parent = workspace
+        monster.model:SetPrimaryPartCFrame(CFrame.Angles(0, rng:NextNumber() * 2 * math.pi, 0) + position)
+
+        for _, player in pairs (game.Players:GetPlayers()) do
+            self:_initMonsterOnClient(player, monster)
+        end
+    end
+end
 
 
 function Monsters:updateMonsterOnAllClients(monster, ...)
@@ -17,29 +36,30 @@ end
 
 
 function Monsters:_initMonsterOnClient(player, monster)
-    self.remotes.InitMonsterOnClient:FireClient(player, monster.replicated.className, monster.model)
+    self.remotes.InitMonsterOnClient:FireClient(player, monster.replicated.className, monster.model, monster.config)
 end
 
 
 function Monsters:main()
-    
-    Generic = External:import(game.ServerScriptService.Classes.Monsters.Generic)
 
     self.remotes = External:getRemotes(script)
+    self.replicated = External:getReplicated(script)
+
+    monsterClasses = self.replicated:GetListOfMonsterClasses()
 
 
-    local newMonster = Generic()
-    table.insert(activeMonsters, newMonster)
-
-    newMonster.model.Parent = workspace
-    newMonster.model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0))
-
-    for _, player in pairs (game.Players:GetPlayers()) do
-       self:_initMonsterOnClient(player, newMonster)
+    for i = 1, 10 do
+        self:spawn('Vampire', Vector3.new(0, 0, 10 * i))
     end
+    
+
 
     Run.Heartbeat:Connect(function()
-        newMonster:tick()
+        for _, monster in pairs (activeMonsters) do
+            if monster.tick then
+                monster:tick()
+            end
+        end
     end)
 
 

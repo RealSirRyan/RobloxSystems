@@ -1,16 +1,13 @@
 local External = require(game.ReplicatedStorage.Modules.Utils.External)
-local Class = require(game.ReplicatedStorage.Modules.Utils.Class)
+local Class = External:import(game.ReplicatedStorage.Modules.Utils.Class)
 local Networking
-
-local walkAnimation = Instance.new("Animation")
-local idleAnimation = Instance.new("Animation")
 
 
 local Generic = Class.new{}
 
 
-function Generic:update(state)
-	
+function Generic:update(...)
+--[[
 	if state == self.replicated.states.idle then
 		
 		self.walk:Stop()
@@ -19,20 +16,22 @@ function Generic:update(state)
 		
 		self.idle:Stop()
 		self.walk:Play()
-	end 
+	end ]]
 end
 
 
-function Generic:init(model)
+function Generic:init(model, config)
+
+	warn(config)
 
 	--Verify all instances are loaded
 	Networking:waitForDescendants(model)
 	Networking:waitForDescendants(self.replicated.modelTemplate)
 	
 	self.humanoid = model:WaitForChild("Humanoid")
-	
-	self.idle = self.humanoid:LoadAnimation(idleAnimation)
-	self.walk = self.humanoid:LoadAnimation(walkAnimation)
+
+	-- self.idle = self.humanoid:LoadAnimation(idleAnimation)
+	-- self.walk = self.humanoid:LoadAnimation(walkAnimation)
 
 	model.PrimaryPart.Transparency = 1
 
@@ -58,8 +57,9 @@ function Generic:main()
 	self.replicated = External:getReplicated(script)
 	
 	
+	--[[
 	walkAnimation.AnimationId = "rbxassetid://101341174956754"
-    idleAnimation.AnimationId = "rbxassetid://104484008905993"
+    idleAnimation.AnimationId = "rbxassetid://104484008905993"]]
 end
 
 return Generic
