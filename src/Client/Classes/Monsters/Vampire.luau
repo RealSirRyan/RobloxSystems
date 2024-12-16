@@ -11,15 +11,6 @@ local Vampire = Class.new{super=Generic}
 
 function Vampire:init(model, config)
     self.super.init(self, model, config)
-
-    -- Applying properties from configs
-    if config.headColour then
-        model['Body Colors'].HeadColor3 = config.headColour
-    end
-
-    if config.face then
-        config.face:Clone().Parent = model.Head
-    end
 end
 
 

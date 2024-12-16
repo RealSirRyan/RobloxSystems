@@ -20,6 +20,42 @@ function Generic:update(...)
 end
 
 
+
+
+function Generic:_equipAccessory(accessoryTemplate)
+	
+	if accessoryTemplate then
+
+		local accessory = accessoryTemplate:Clone()
+		
+		local handle = accessory:FindFirstChild("Handle")
+		
+		local accessoryAttachment = handle:FindFirstChildOfClass("Attachment")
+		
+		local characterAttachment
+
+		if accessoryAttachment.Name == 'HairAttachment' then
+			characterAttachment = self.model.Head.HairAttachment
+		elseif accessoryAttachment.Name == "HatAttachment" then
+			characterAttachment = self.model.Head.HatAttachment
+		end
+		
+		if characterAttachment then
+			accessory.Parent = self.model
+		
+			local weld = Instance.new("Weld")
+			weld.Part0 = handle
+			weld.Part1 = characterAttachment.Parent
+			
+			weld.C0 = accessoryAttachment.CFrame
+			weld.C1 = characterAttachment.CFrame
+			weld.Parent = handle
+		end
+
+	end
+end
+
+
 function Generic:init(model, config)
 
 	warn(config)
@@ -29,6 +65,7 @@ function Generic:init(model, config)
 	Networking:waitForDescendants(self.replicated.modelTemplate)
 	
 	self.humanoid = model:WaitForChild("Humanoid")
+	self.model = model
 
 	-- self.idle = self.humanoid:LoadAnimation(idleAnimation)
 	-- self.walk = self.humanoid:LoadAnimation(walkAnimation)
@@ -47,6 +84,30 @@ function Generic:init(model, config)
 	local rootJoint = modelClone.PrimaryPart:WaitForChild("RootJoint")
 	rootJoint.Parent = model.PrimaryPart
 	rootJoint.Part0 = model.PrimaryPart
+
+	-- Processing config
+	
+	-- Equiping Accessories
+
+	if config.accessories then
+		for _, accessoryTemplate in pairs (config.accessories) do
+			self:_equipAccessory(accessoryTemplate)
+		end
+	end
+
+	-- Equiping Face
+
+	if config.face then
+		config.face:Clone().Parent = model.Head
+	end
+
+	-- Equiping Hats
+	if config.hats then
+		for _, hat in pairs(config.hats) do
+			self:_equipAccessory(hat)
+		end
+	end
+
 end
 
 

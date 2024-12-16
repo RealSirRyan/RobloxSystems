@@ -8,8 +8,6 @@ local Monsters = {}
 
 
 function Monsters:_initMonster(className, model, config)
-    print('Do we see config here?')
-    warn(config)
     if monsterClasses[className] then
         local monster = monsterClasses[className](model, config)
         activeMonsters[model] = monster

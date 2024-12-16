@@ -1,3 +1,6 @@
+local External = require(game.ReplicatedStorage.Modules.Utils.External)
+
+
 local Generic = {}
 
 
@@ -7,7 +10,7 @@ function Generic:main()
 		['walk']=1
 	}
 	self.className = script.Name
-	self.modelTemplate = game.ReplicatedStorage.Monsters.Templates.Generic
+	self.modelTemplate = External:getAssets().MonsterTemplates.Generic
 end
 
 return Generic

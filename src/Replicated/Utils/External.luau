@@ -5,6 +5,8 @@ local clientScriptsDir
 local replicatedScriptsDir = game.ReplicatedStorage.Modules
 local remotesDir = game.ReplicatedStorage.Remotes
 
+local assets
+
 local mainRanModules = {}
 
 
@@ -64,11 +66,18 @@ end
 
 
 function External:findFirstDescendantOfClassAndName(ancestor, name, class)
+    print(ancestor)
     for _, descendant in pairs (ancestor:GetDescendants()) do
+        print(descendant)
         if descendant.Name == name and descendant.ClassName == class then
             return descendant
         end
     end
+end
+
+
+function External:getAssets()
+    return assets
 end
 
 
@@ -78,7 +87,6 @@ function External:_initDir(dir)
     
     for _, instance in pairs (dir:GetDescendants()) do
         if instance:IsA("ModuleScript") and instance ~= script then
-            print(instance:GetFullName())
             task.spawn(function()
                 local success, error = pcall(function()
                     self:import(instance)
@@ -95,9 +103,16 @@ end
 
 function External:initAll()
     if Run:IsServer() then
+        
+        assets = workspace.Assets
+        assets.Parent = game.ReplicatedStorage
+        
         self:_initDir(serverScriptsDir)
         self:_initDir(replicatedScriptsDir)
     else
+        
+        assets = game.ReplicatedStorage:WaitForChild("Assets")
+        
         clientScriptsDir = game.Players.LocalPlayer.PlayerScripts.Scripts
 
         self:_initDir(clientScriptsDir)

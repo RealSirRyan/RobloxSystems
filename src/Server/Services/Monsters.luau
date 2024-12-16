@@ -12,9 +12,12 @@ local activeMonsters = {}
 local Monsters = {}
 
 
-function Monsters:spawn(className, position)
-    if type(className) == "string" and typeof(position) == "Vector3" and monsterClasses[className] then
-        local monster = monsterClasses[className]()
+function Monsters:spawn(className, position, configPreset)
+    if type(className) == "string" then
+        
+        local monsterClass = monsterClasses[className]
+
+        local monster = monsterClass(configPreset)
 
         table.insert(activeMonsters, monster)
 
