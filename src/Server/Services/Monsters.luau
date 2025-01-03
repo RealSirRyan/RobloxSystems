@@ -1,7 +1,6 @@
 local Run = game:GetService("RunService")
 
 local External = require(game.ReplicatedStorage.Modules.Utils.External)
-local Vampire
 
 local rng = Random.new()
 
@@ -32,7 +31,13 @@ end
 
 
 function Monsters:updateMonsterOnAllClients(monster, ...)
-    self.remotes.UpdateMonsterOnClient:FireAllClients(monster.model, ...)    
+    
+    self.remotes.UpdateMonsterOnClient:FireAllClients(monster.model, ...)
+end
+
+
+function Monsters:updateMonsterConfigOnAllClients(monster, ...)
+    self.remotes.UpdateMonsterConfigOnClient:FireAllClients(monster.model, ...)
 end
 
 
@@ -44,7 +49,7 @@ end
 
 
 function Monsters:main()
-
+    
     self.remotes = External:getRemotes(script)
     self.replicated = External:getReplicated(script)
 
@@ -56,22 +61,20 @@ function Monsters:main()
     end
     
 
-
-    Run.Heartbeat:Connect(function()
-        for _, monster in pairs (activeMonsters) do
-            if monster.tick then
-                monster:tick()
-            end
-        end
-    end)
-
-
     self.remotes.InitAllMonstersOnClient.OnServerEvent:Connect(function(player)
         for _, monster in pairs (activeMonsters) do
             self:_initMonsterOnClient(player, monster)
         end
     end)
 
+    
+    while task.wait(0.5) do
+        for _, monster in pairs (activeMonsters) do
+            if monster.tick then
+                monster:tick()
+            end
+        end
+    end
 end
 
 return Monsters

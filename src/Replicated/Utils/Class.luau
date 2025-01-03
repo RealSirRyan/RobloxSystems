@@ -28,6 +28,8 @@ end
 function Class.new(newClass)
     -- When an object sets its metatable to the class, this allows it to access the class's methods and attributes.
     newClass.__index = newClass
+
+    --TODO: Using the reference to super, can we 
     
     return setmetatable(newClass, Class)
 end

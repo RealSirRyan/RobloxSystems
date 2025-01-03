@@ -16,9 +16,20 @@ end
 
 
 function Monsters:_updateMonster(model, ...)
+    
     local monster = activeMonsters[model]
+    
     if monster and monster.update then
         monster:update(...)
+    end
+end
+
+
+function Monsters:_updateMonsterConfig(model, ...)
+    
+    local monster = activeMonsters[model]
+    if monster and monster.update then
+        monster:updateConfig(...)
     end
 end
 
@@ -38,6 +49,10 @@ function Monsters:main()
 	self.remotes.UpdateMonsterOnClient.OnClientEvent:Connect(function(...)
 		self:_updateMonster(...)
 	end)
+
+    self.remotes.UpdateMonsterConfigOnClient.OnClientEvent:Connect(function(...)
+        self:_updateMonsterConfig(...)
+    end)
 
     --Ask the server to send us all the currently active monsters
 	self.remotes.InitAllMonstersOnClient:FireServer()

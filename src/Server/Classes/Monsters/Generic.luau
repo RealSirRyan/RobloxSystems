@@ -1,5 +1,6 @@
 local External = require(game.ReplicatedStorage.Modules.Utils.External)
 local Class = External:import(game.ReplicatedStorage.Modules.Utils.Class)
+local Monsters
 
 -- local walkCooldown = 5
 -- local walkDistance = 20
@@ -35,6 +36,16 @@ function Generic:tick()
             Monsters:updateMonsterOnAllClients(self, self.replicated.states.idle)
 		end
 	end]]
+end
+
+
+function Generic:update(...)
+	Monsters:updateMonsterOnAllClients(self, ...)
+end
+
+
+function Generic:updateConfig(...)
+	Monsters:updateMonsterConfigOnAllClients(self, ...)
 end
 
 
@@ -77,8 +88,11 @@ end
 
 
 function Generic:main()
-	
+
+	Monsters = External:import(game.ServerScriptService.Services.Monsters)
+
 	self.replicated = External:getReplicated(script)
+
 end
 
 return Generic

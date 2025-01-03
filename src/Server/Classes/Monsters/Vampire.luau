@@ -13,12 +13,19 @@ local Vampire = Class.new{super=Generic}
 
 
 function Vampire:init(configPreset)
-    warn("Tried to init vampire")
+    
     configPreset = configPreset or "default"
     
     self.super.init(self)
 
+
     self.config = self.configPresets[configPreset]()
+
+    task.spawn(function()
+        while task.wait(2) do
+            --self:updateConfig{face = faces.BeastMode}
+        end
+    end)
 end
 
 

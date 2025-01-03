@@ -16,6 +16,8 @@ end
 
 function Vampire:main()
     self.replicated = External:getReplicated(script)
+
+    
 end
 
 

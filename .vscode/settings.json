@@ -13,7 +13,7 @@
         },
         {
             "folderPath": "RobloxSystems/src/Replicated/",
-            "badge": "🕹️",
+            "badge": "💾",
             "color": "foldercolorizer.color_ff66ff"
         },
         {
@@ -21,11 +21,13 @@
         },
         {
             "folderPath": "RobloxSystems/src/Server/",
-            "color": "foldercolorizer.color_00ccff"
+            "color": "foldercolorizer.color_00ccff",
+            "badge": "🖥️"
         },
         {
             "folderPath": "RobloxSystems/src/Client/",
-            "color": "foldercolorizer.color_ffcc00"
+            "color": "foldercolorizer.color_ffcc00",
+            "badge": "😀"
         }
     ]
 }

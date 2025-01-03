@@ -3,7 +3,6 @@ local External = require(game.ReplicatedStorage.Modules.Utils.External)
 
 local Monsters = {}
 
-print('HI DO I EVER GET RUN')
 
 function Monsters:GetListOfMonsterClasses()
     

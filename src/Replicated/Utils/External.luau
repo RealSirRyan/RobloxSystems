@@ -66,9 +66,9 @@ end
 
 
 function External:findFirstDescendantOfClassAndName(ancestor, name, class)
-    print(ancestor)
+    
     for _, descendant in pairs (ancestor:GetDescendants()) do
-        print(descendant)
+
         if descendant.Name == name and descendant.ClassName == class then
             return descendant
         end
@@ -88,6 +88,7 @@ function External:_initDir(dir)
     for _, instance in pairs (dir:GetDescendants()) do
         if instance:IsA("ModuleScript") and instance ~= script then
             task.spawn(function()
+            
                 local success, error = pcall(function()
                     self:import(instance)
                 end)
